@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Application web de suivi du temps de travail | Finance D</title>
+  <link rel="stylesheet" href="styles/global.css"/>
+  <script defer type="module" src="scripts/index.js"></script>
+</head>
+<body>
+<h1>Suivi des heures de travail</h1>
+<form id="timeTrackingForm">
+  <div class="form-field start">
+    <label for="startTime"><strong>Date de début</strong></label>
+    <input type="datetime-local" id="startTime" name="startTime" required aria-required="true"
+           value="2021-10-16T14:00">
+  </div>
+  <div class="form-field end">
+    <label for="endTime"><strong>Date de fin</strong></label>
+    <input type="datetime-local" id="endTime" name="endTime" required aria-required="true"
+           value="2021-10-16T14:44">
+  </div>
+  <div class="form-field buttons">
+    <button id="addTimeRow" type="submit">Ajouter ce temps de travail</button>
+  </div>
+</form>
+
+<table>
+  <thead>
+  <tr>
+    <th>Date de début</th>
+    <th>Date de fin</th>
+    <th>Total heures</th>
+  </tr>
+  </thead>
+  <tbody id="timeTrackingRows">
+  <!--Javascript Generated-->
+  </tbody>
+</table>
+
+</body>
+</html>

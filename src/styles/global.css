@@ -1,0 +1,50 @@
+:root {
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+button {
+  width: 100%;
+}
+
+table {
+  border-spacing: .75rem;
+}
+
+table th, table td {
+  padding: .25rem 0;
+  text-align: center;
+}
+
+.delete-btn {
+  width: auto;
+  height: 1rem;
+  padding: 0;
+}
+
+.delete-btn-icon {
+  width: auto;
+  height: 100%;
+  cursor: pointer;
+}
