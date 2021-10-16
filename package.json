@@ -3,32 +3,29 @@
   "version": "1.0.0",
   "description": "Web app for simple time tracking. Get amount of time spent on your tasks.",
   "scripts": {
-	"start": "parcel",
-	"build": "rm -rf dist && parcel build --no-source-maps"
+    "start": "parcel --no-cache",
+    "build": "rm -rf dist && parcel build --no-source-maps",
+    "deploy": "firebase deploy"
   },
   "source": "src/index.html",
   "browserslist": [
-	"last 2 Chrome versions",
-	"last 2 Firefox versions",
-	"last 2 safari versions"
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 safari versions"
   ],
   "repository": {
-	"type": "git",
-	"url": "git+https://github.com/alex-drocks/time-tracking.git"
+    "type": "git",
+    "url": "https://github.com/alex-drocks/time-tracking-app.git"
   },
   "keywords": [
-	"Time Tracking Web App"
+    "Time Tracking Web App"
   ],
   "author": "Alexandre Desroches",
   "license": "ISC",
-  "bugs": {
-	"url": "https://github.com/alex-drocks/time-tracking/issues"
-  },
-  "homepage": "https://github.com/alex-drocks/time-tracking#readme",
   "devDependencies": {
-	"parcel": "^2.0.0"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-	"nanoid": "^3.1.30"
+    "nanoid": "^3.1.30"
   }
 }
