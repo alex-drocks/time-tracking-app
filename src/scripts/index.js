@@ -1,24 +1,64 @@
+import {differenceInMilliseconds, format} from 'date-fns';
 import {nanoid} from 'nanoid';
 
-window.addEventListener("DOMContentLoaded", async () => {
-  await console.log("DOMContentLoaded");
-  registerEventHandlers();
+
+window.addEventListener("DOMContentLoaded", () => {
+  initApp();
 });
 
 
-const html = {
-  timeTrackingForm: document.getElementById("timeTrackingForm"),
-  timeTrackingRows: document.getElementById("timeTrackingRows"),
+const state = {
+  timerIsActive: false
 };
 
 
+const html = {
+  toggleTimerBtn: document.getElementById("toggleTimerBtn"),
+  timeTrackingForm: document.getElementById("timeTrackingForm"),
+  startTimeInput: document.getElementById("startTimeInput"),
+  endTimeInput: document.getElementById("endTimeInput"),
+  timeTrackingRows: document.getElementById("timeTrackingRows"),
+};
+
+const playSVG = `<svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 22V2l18 10L3 22z"/></svg>`;
+const stopSVG = `<svg class="stop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h20v20H2z"/></svg>`;
+
+
+function initApp() {
+  html.toggleTimerBtn.className = "play";
+  html.toggleTimerBtn.innerHTML = playSVG;
+  html.startTimeInput.value = "";
+  html.endTimeInput.value = "";
+  registerEventHandlers();
+}
+
+
 function registerEventHandlers() {
+  html.toggleTimerBtn.onclick = toggleTimer;
   html.timeTrackingForm.onsubmit = addTimeRow;
 }
 
 
-function addTimeRow(ev) {
-  ev.preventDefault(); // do not reload browser page
+function toggleTimer() {
+  // YYYY-MM-DDThh:mm
+  const validDateString = format(new Date(), "yyyy-MM-dd'T'kk:mm");
+  if (state.timerIsActive) {
+    html.endTimeInput.value = validDateString;
+    html.toggleTimerBtn.className = "play";
+    html.toggleTimerBtn.innerHTML = playSVG;
+    state.timerIsActive = false;
+    addTimeRow(null);
+  } else {
+    html.startTimeInput.value = validDateString;
+    html.toggleTimerBtn.className = "stop";
+    html.toggleTimerBtn.innerHTML = stopSVG;
+    state.timerIsActive = true;
+  }
+}
+
+
+function addTimeRow(event = null) {
+  event?.preventDefault(); // do not reload browser page when its a form submit event
   const formData = new FormData(html.timeTrackingForm);
   const startTime = new Date(formData.get("startTime").toString());
   const endTime = new Date(formData.get("endTime").toString());
@@ -28,7 +68,6 @@ function addTimeRow(ev) {
 
 
 function deleteTimeRow(rowElement) {
-  console.log(rowElement);
   rowElement.remove();
 }
 
@@ -40,11 +79,11 @@ function createTimeRowElement(startTime, endTime, totalHours) {
 
   const start = document.createElement("td");
   start.id = `startTime-${uniqueId}`;
-  start.textContent = formatDate(startTime);
+  start.textContent = format(startTime, "yyyy-MM-dd @ kk:mm");
 
   const end = document.createElement("td");
   end.id = `endTime-${uniqueId}`;
-  end.textContent = formatDate(endTime);
+  end.textContent = format(endTime, "yyyy-MM-dd @ kk:mm");
 
   const total = document.createElement("td");
   total.id = `totalTime-${uniqueId}`;
@@ -62,23 +101,10 @@ function createTimeRowElement(startTime, endTime, totalHours) {
 
 
 function getTimeDifferenceInHours(dateEnd, dateStart) {
-  const differenceInMilliseconds = dateEnd.getTime() - dateStart.getTime();
-  return roundToX(differenceInMilliseconds / 3600000, 2);
+  return roundToX(differenceInMilliseconds(dateEnd, dateStart) / 3600000, 2);
 }
 
 
 function roundToX(num, X) {
   return +(Math.round(num + "e+" + X) + "e-" + X);
-}
-
-
-function formatDate(date) {
-  return date.toLocaleTimeString("fr-CA", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit"
-  });
 }

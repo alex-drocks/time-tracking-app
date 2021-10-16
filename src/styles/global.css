@@ -1,5 +1,11 @@
 :root {
   font-family: Arial, sans-serif;
+  --green: #0bf57c;
+  --red: #ff2525;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -12,9 +18,10 @@ body {
 
 form {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-end;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 2rem;
 }
 
@@ -24,12 +31,9 @@ form {
   align-items: flex-start;
 }
 
-button {
-  width: 100%;
-}
-
 table {
   border-spacing: .75rem;
+  border: 1px solid lightgray;
 }
 
 table th, table td {
@@ -47,4 +51,41 @@ table th, table td {
   width: auto;
   height: 100%;
   cursor: pointer;
+}
+
+#toggleTimerBtn {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  user-select: none;
+  border: none;
+  cursor: pointer;
+  margin: .25rem .125rem;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .45);
+}
+
+#toggleTimerBtn:hover,
+#toggleTimerBtn:focus {
+  border-color: #000;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+}
+
+#toggleTimerBtn.play {
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+#toggleTimerBtn.stop {
+  background-color: var(--red);
+  border-color: var(--red);
+}
+
+#toggleTimerBtn svg {
+  width: 24px;
+  height: 24px;
 }
