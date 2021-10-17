@@ -1,4 +1,4 @@
-import {differenceInMilliseconds, format} from 'date-fns';
+import {format} from 'date-fns';
 import {nanoid} from 'nanoid';
 
 
@@ -20,13 +20,12 @@ const html = {
   timeTrackingRows: document.getElementById("timeTrackingRows"),
 };
 
-const playSVG = `<svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 22V2l18 10L3 22z"/></svg>`;
-const stopSVG = `<svg class="stop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h20v20H2z"/></svg>`;
+// const playSVG = `<svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 22V2l18 10L3 22z"/></svg>`;
+// const stopSVG = `<svg class="stop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h20v20H2z"/></svg>`;
 
 
 function initApp() {
-  html.toggleTimerBtn.className = "play";
-  html.toggleTimerBtn.innerHTML = playSVG;
+  html.toggleTimerBtn.className = "start-timer";
   html.startTimeInput.value = "";
   html.endTimeInput.value = "";
   registerEventHandlers();
@@ -44,14 +43,12 @@ function toggleTimer() {
   const validDateString = format(new Date(), "yyyy-MM-dd'T'kk:mm");
   if (state.timerIsActive) {
     html.endTimeInput.value = validDateString;
-    html.toggleTimerBtn.className = "play";
-    html.toggleTimerBtn.innerHTML = playSVG;
+    html.toggleTimerBtn.className = "start-timer";
     state.timerIsActive = false;
     addTimeRow(null);
   } else {
     html.startTimeInput.value = validDateString;
-    html.toggleTimerBtn.className = "stop";
-    html.toggleTimerBtn.innerHTML = stopSVG;
+    html.toggleTimerBtn.className = "stop-timer";
     state.timerIsActive = true;
   }
 }
@@ -79,11 +76,11 @@ function createTimeRowElement(startTime, endTime, totalHours) {
 
   const start = document.createElement("td");
   start.id = `startTime-${uniqueId}`;
-  start.textContent = format(startTime, "yyyy-MM-dd @ kk:mm");
+  start.textContent = format(startTime, "yyyy-MM-dd, kk:mm");
 
   const end = document.createElement("td");
   end.id = `endTime-${uniqueId}`;
-  end.textContent = format(endTime, "yyyy-MM-dd @ kk:mm");
+  end.textContent = format(endTime, "yyyy-MM-dd, kk:mm");
 
   const total = document.createElement("td");
   total.id = `totalTime-${uniqueId}`;
@@ -101,7 +98,8 @@ function createTimeRowElement(startTime, endTime, totalHours) {
 
 
 function getTimeDifferenceInHours(dateEnd, dateStart) {
-  return roundToX(differenceInMilliseconds(dateEnd, dateStart) / 3600000, 2);
+  const differenceInMilliseconds = dateEnd.getTime() - dateStart.getTime()
+  return roundToX(differenceInMilliseconds / 3600000, 2);
 }
 
 

@@ -1,7 +1,7 @@
 :root {
   font-family: Arial, sans-serif;
-  --green: #0bf57c;
-  --red: #ff2525;
+  --green: #06ec74;
+  --red: #ff1a1a;
 }
 
 * {
@@ -16,13 +16,17 @@ body {
   gap: 2rem;
 }
 
+h1 {
+  margin: 0
+}
+
 form {
   display: flex;
   flex-direction: row;
   align-items: flex-end;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .form-field {
@@ -34,6 +38,7 @@ form {
 table {
   border-spacing: .75rem;
   border: 1px solid lightgray;
+  font-size: .8rem;
 }
 
 table th, table td {
@@ -60,9 +65,9 @@ table th, table td {
   border: none;
   cursor: pointer;
   margin: .25rem .125rem;
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
+  border-radius: .25rem;
+  width: 120px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,14 +80,34 @@ table th, table td {
   box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
 }
 
-#toggleTimerBtn.play {
+#toggleTimerBtn.start-timer {
   background-color: var(--green);
   border-color: var(--green);
 }
 
-#toggleTimerBtn.stop {
+#toggleTimerBtn.stop-timer {
   background-color: var(--red);
   border-color: var(--red);
+}
+
+#toggleTimerBtn .toggle-timer-btn--state {
+  width: 100%;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+#toggleTimerBtn.start-timer .toggle-timer-btn--state.start {
+  display: flex !important;
+}
+
+#toggleTimerBtn.stop-timer .toggle-timer-btn--state.stop {
+  display: flex !important;
 }
 
 #toggleTimerBtn svg {

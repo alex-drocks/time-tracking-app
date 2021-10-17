@@ -9,8 +9,21 @@
   <script defer type="module" src="scripts/index.js"></script>
 </head>
 <body>
-<h1>Suivi des heures de travail</h1>
-<button id="toggleTimerBtn"><!--dynamic icon injected with Javascript--></button>
+<h1>Compteur de temps</h1>
+<button id="toggleTimerBtn">
+  <span class="toggle-timer-btn--state start" style="display: none">
+    <svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M3 22V2l18 10L3 22z"/>
+    </svg>
+    <span>Début</span>
+  </span>
+  <span class="toggle-timer-btn--state stop" style="display: none">
+    <svg class="stop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path
+            d="M11 22H7V2h4v20zm6-20h-4v20h4V2z"/></svg>
+    <span>Pause</span>
+  </span>
+
+</button>
 <form id="timeTrackingForm">
   <div class="form-field start">
     <label for="startTimeInput"><strong>Date de début</strong></label>
@@ -30,9 +43,9 @@
 <table>
   <thead>
   <tr>
-    <th>Date début</th>
-    <th>Date fin</th>
-    <th>Total heures</th>
+    <th>Début</th>
+    <th>Fin</th>
+    <th>Heures</th>
   </tr>
   </thead>
   <tbody id="timeTrackingRows">
