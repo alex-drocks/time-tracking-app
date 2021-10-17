@@ -8,11 +8,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 const state = {
-  timerIsActive: false
+  timerIsActive: false,
+  timerInterval: null,
+  dateTimeStart: null,
+  dateTimeEnd: null,
 };
 
 
 const html = {
+  timeCounter: document.getElementById("timeCounter"),
   toggleTimerBtn: document.getElementById("toggleTimerBtn"),
   timeTrackingForm: document.getElementById("timeTrackingForm"),
   startTimeInput: document.getElementById("startTimeInput"),
@@ -20,37 +24,80 @@ const html = {
   timeTrackingRows: document.getElementById("timeTrackingRows"),
 };
 
-// const playSVG = `<svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 22V2l18 10L3 22z"/></svg>`;
-// const stopSVG = `<svg class="stop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h20v20H2z"/></svg>`;
-
 
 function initApp() {
-  html.toggleTimerBtn.className = "start-timer";
-  html.startTimeInput.value = "";
-  html.endTimeInput.value = "";
   registerEventHandlers();
+  resetTimer();
 }
 
 
 function registerEventHandlers() {
   html.toggleTimerBtn.onclick = toggleTimer;
   html.timeTrackingForm.onsubmit = addTimeRow;
+  html.timeTrackingForm.onreset = resetTimer;
+}
+
+
+function resetTimer() {
+  state.timerInterval && clearInterval(state.timerInterval);
+
+  state.timerIsActive = false;
+  state.timerInterval = null;
+  state.dateTimeStart = null;
+  state.dateTimeEnd = null;
+
+  html.toggleTimerBtn.className = "start-timer";
+  html.startTimeInput.value = "";
+  html.endTimeInput.value = "";
+  html.timeCounter.textContent = "0h 0m 0s";
 }
 
 
 function toggleTimer() {
-  // YYYY-MM-DDThh:mm
-  const validDateString = format(new Date(), "yyyy-MM-dd'T'kk:mm");
   if (state.timerIsActive) {
-    html.endTimeInput.value = validDateString;
-    html.toggleTimerBtn.className = "start-timer";
+    stopTimer();
     state.timerIsActive = false;
-    addTimeRow(null);
   } else {
-    html.startTimeInput.value = validDateString;
-    html.toggleTimerBtn.className = "stop-timer";
+    startTimer();
     state.timerIsActive = true;
   }
+}
+
+
+function startTimer() {
+  const now = new Date();
+  state.dateTimeStart = now;
+  state.timerInterval = setInterval(updateTimerDisplay, 1000);
+  html.startTimeInput.value = format(now, "yyyy-MM-dd'T'kk:mm");
+  html.toggleTimerBtn.className = "stop-timer";
+}
+
+
+function stopTimer() {
+  state.timerInterval && clearInterval(state.timerInterval);
+  const now = new Date();
+  state.dateTimeEnd = now;
+  html.endTimeInput.value = format(now, "yyyy-MM-dd'T'kk:mm");
+  addTimeRow(null);
+
+  html.toggleTimerBtn.className = "start-timer";
+}
+
+
+function updateTimerDisplay() {
+  const now = new Date();
+  // const hours = differenceInHours(now, state.dateTimeStart);
+  // const mins = differenceInMinutes(now, state.dateTimeStart);
+  // const secs = differenceInSeconds(now, state.dateTimeStart);
+
+  let diffTime = now.valueOf() - state.dateTimeStart.valueOf();
+  let days = diffTime / (24 * 60 * 60 * 1000);
+  let hours = (days % 1) * 24;
+  let minutes = (hours % 1) * 60;
+  let secs = (minutes % 1) * 60;
+  [days, hours, minutes, secs] = [Math.floor(days), Math.floor(hours), Math.floor(minutes), Math.floor(secs)];
+
+  html.timeCounter.textContent = `${hours}h ${minutes}m ${secs}s`;
 }
 
 
@@ -59,7 +106,7 @@ function addTimeRow(event = null) {
   const formData = new FormData(html.timeTrackingForm);
   const startTime = new Date(formData.get("startTime").toString());
   const endTime = new Date(formData.get("endTime").toString());
-  const totalHours = getTimeDifferenceInHours(endTime, startTime);
+  const totalHours = calculateElapsedHours(endTime, startTime);
   createTimeRowElement(startTime, endTime, totalHours);
 }
 
@@ -97,8 +144,8 @@ function createTimeRowElement(startTime, endTime, totalHours) {
 }
 
 
-function getTimeDifferenceInHours(dateEnd, dateStart) {
-  const differenceInMilliseconds = dateEnd.getTime() - dateStart.getTime()
+function calculateElapsedHours(dateEnd, dateStart) {
+  const differenceInMilliseconds = dateEnd.getTime() - dateStart.getTime();
   return roundToX(differenceInMilliseconds / 3600000, 2);
 }
 

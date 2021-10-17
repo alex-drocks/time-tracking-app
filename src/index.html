@@ -10,7 +10,10 @@
 </head>
 <body>
 <h1>Compteur de temps</h1>
-<button id="toggleTimerBtn">
+
+<div id="timeCounter">hh mm ss</div>
+
+<button id="toggleTimerBtn" class="">
   <span class="toggle-timer-btn--state start" style="display: none">
     <svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
       <path d="M3 22V2l18 10L3 22z"/>
@@ -20,23 +23,24 @@
   <span class="toggle-timer-btn--state stop" style="display: none">
     <svg class="stop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path
             d="M11 22H7V2h4v20zm6-20h-4v20h4V2z"/></svg>
-    <span>Pause</span>
+    <span>Arrêt</span>
   </span>
-
 </button>
+
 <form id="timeTrackingForm">
   <div class="form-field start">
     <label for="startTimeInput"><strong>Date de début</strong></label>
     <input type="datetime-local" id="startTimeInput" name="startTime" required aria-required="true"
-           value="2021-10-16T14:00" min="2021-10-16T00:00">
+           min="2021-10-16T00:00">
   </div>
   <div class="form-field end">
     <label for="endTimeInput"><strong>Date de fin</strong></label>
     <input type="datetime-local" id="endTimeInput" name="endTime" required aria-required="true"
-           value="2021-10-16T14:44" min="2021-10-16T00:00">
+           min="2021-10-16T00:00">
   </div>
-  <div class="form-field buttons" style="display: none">
-    <button id="addTimeRow" type="submit">Ajouter ce temps de travail</button>
+  <div class="form-field buttons">
+    <button id="addTimeRowBtn" type="submit">Calculer</button>
+    <button id="resetTimerBtn" type="reset">Annuler</button>
   </div>
 </form>
 
