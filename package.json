@@ -4,7 +4,7 @@
   "description": "Web app for simple time tracking. Get amount of time spent on your tasks.",
   "scripts": {
     "start": "parcel --no-cache",
-    "deploy": "rm -rf dist && parcel build --no-source-maps firebase deploy"
+    "deploy": "rm -rf dist && parcel build --no-source-maps && firebase deploy"
   },
   "source": "src/index.html",
   "browserslist": "> 1%, last 2 versions, not dead",

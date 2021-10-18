@@ -1,4 +1,5 @@
 .firebase
+.parcel-cache
 
 # Jetbrains IDE
 .idea
