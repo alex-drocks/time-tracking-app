@@ -5,7 +5,7 @@
   "scripts": {
     "start": "parcel --no-cache",
     "build": "rm -rf dist && parcel build --no-source-maps",
-    "deploy": "firebase deploy"
+    "deploy": "npm run build && firebase deploy"
   },
   "source": "src/index.html",
   "browserslist": "> 1%, last 2 versions, not dead",

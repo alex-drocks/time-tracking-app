@@ -8,6 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 const state = {
+  timeTrackingData: [],
   timerIsActive: false,
   timerInterval: null,
   dateTimeStart: null,
@@ -22,12 +23,14 @@ const html = {
   startTimeInput: document.getElementById("startTimeInput"),
   endTimeInput: document.getElementById("endTimeInput"),
   timeTrackingRows: document.getElementById("timeTrackingRows"),
+  resetApplication: document.getElementById("resetApplication"),
 };
 
 
 function initApp() {
   registerEventHandlers();
   resetTimer();
+  loadTimeTrackingData();
 }
 
 
@@ -35,6 +38,7 @@ function registerEventHandlers() {
   html.toggleTimerBtn.onclick = toggleTimer;
   html.timeTrackingForm.onsubmit = addTimeRow;
   html.timeTrackingForm.onreset = resetTimer;
+  html.resetApplication.onclick = resetApplication;
 }
 
 
@@ -104,10 +108,20 @@ function updateTimerDisplay() {
 function addTimeRow(event = null) {
   event?.preventDefault(); // do not reload browser page when its a form submit event
   const formData = new FormData(html.timeTrackingForm);
+
   const startTime = new Date(formData.get("startTime").toString());
   const endTime = new Date(formData.get("endTime").toString());
   const totalHours = calculateElapsedHours(endTime, startTime);
-  createTimeRowElement(startTime, endTime, totalHours);
+
+  const timeTrackingDataRow = {
+    startTime: format(startTime, "yyyy-MM-dd, kk:mm"),
+    endTime: format(endTime, "yyyy-MM-dd, kk:mm"),
+    totalHours: totalHours,
+  };
+
+  state.timeTrackingData.push(timeTrackingDataRow);
+  createTimeRowElement(timeTrackingDataRow);
+  saveTimeTrackingData(timeTrackingDataRow);
 }
 
 
@@ -116,22 +130,25 @@ function deleteTimeRow(rowElement) {
 }
 
 
-function createTimeRowElement(startTime, endTime, totalHours) {
+function createTimeRowElement(timeTrackingDataRow) {
   const row = document.createElement("tr");
   const uniqueId = nanoid();
   row.id = `timeRow-${uniqueId}`;
 
   const start = document.createElement("td");
   start.id = `startTime-${uniqueId}`;
-  start.textContent = format(startTime, "yyyy-MM-dd, kk:mm");
+  start.className = "start-time";
+  start.textContent = timeTrackingDataRow.startTime;
 
   const end = document.createElement("td");
   end.id = `endTime-${uniqueId}`;
-  end.textContent = format(endTime, "yyyy-MM-dd, kk:mm");
+  end.className = "end-time";
+  end.textContent = timeTrackingDataRow.endTime;
 
   const total = document.createElement("td");
-  total.id = `totalTime-${uniqueId}`;
-  total.textContent = totalHours;
+  total.id = `totalHours-${uniqueId}`;
+  total.className = "total-hours";
+  total.textContent = timeTrackingDataRow.totalHours;
 
   const deleteBtn = document.createElement("td");
   deleteBtn.className = "delete-btn";
@@ -152,4 +169,29 @@ function calculateElapsedHours(dateEnd, dateStart) {
 
 function roundToX(num, X) {
   return +(Math.round(num + "e+" + X) + "e-" + X);
+}
+
+
+function saveTimeTrackingData() {
+  localStorage.setItem("time-tracking-data", JSON.stringify(state.timeTrackingData));
+}
+
+
+function loadTimeTrackingData() {
+  const savedData = localStorage.getItem("time-tracking-data");
+  if (savedData) {
+    const dataRows = JSON.parse(savedData);
+    if (Array.isArray(dataRows)) {
+      state.timeTrackingData = dataRows;
+      dataRows.forEach(dataRow => {
+        createTimeRowElement(dataRow);
+      });
+    }
+  }
+}
+
+
+function resetApplication() {
+  localStorage.removeItem("time-tracking-data");
+  window.location.reload();
 }
