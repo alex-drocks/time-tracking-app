@@ -129,7 +129,7 @@ table .delete-btn-icon {
   cursor: pointer;
 }
 
-#sumOfWorkedHours {
+tfoot .sum {
   border-top: 1px dashed lightgrey;
   font-weight: 600;
 }

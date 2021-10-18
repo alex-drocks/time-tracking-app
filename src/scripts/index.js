@@ -24,6 +24,7 @@ const state = {
   timerInterval: null,
   dateTimeStart: null,
   dateTimeEnd: null,
+  hourlyRate: 0,
 };
 
 
@@ -33,8 +34,10 @@ const html = {
   timeTrackingForm: document.getElementById("timeTrackingForm"),
   startTimeInput: document.getElementById("startTimeInput"),
   endTimeInput: document.getElementById("endTimeInput"),
+  hourlyRate: document.getElementById("hourlyRate"),
   timeTrackingRows: document.getElementById("timeTrackingRows"),
   sumOfWorkedHours: document.getElementById("sumOfWorkedHours"),
+  sumOfCharges: document.getElementById("sumOfCharges"),
   resetApplication: document.getElementById("resetApplication"),
 };
 
@@ -51,6 +54,12 @@ function registerEventHandlers() {
   html.timeTrackingForm.onsubmit = addTimeRow;
   html.timeTrackingForm.onreset = resetTimer;
   html.resetApplication.onclick = resetApplication;
+  html.hourlyRate.onchange = handleHourlyRateChange;
+}
+
+
+function handleHourlyRateChange(ev) {
+  state.hourlyRate = ev.target.value;
 }
 
 
@@ -118,13 +127,17 @@ function addTimeRow(event = null) {
 
   const startTime = new Date(formData.get("startTime").toString());
   const endTime = new Date(formData.get("endTime").toString());
-  const totalHours = calculateElapsedHours(endTime, startTime);
+  const hourlyRate = Number(formData.get("hourlyRate"));
+  const hours = calculateElapsedHours(endTime, startTime);
+  const price = roundToX(state.hourlyRate * hours, 2);
 
   const timeTrackingDataRow = {
     id: nanoid(),
     startTime: format(startTime, "yyyy-MM-dd, kk:mm"),
     endTime: format(endTime, "yyyy-MM-dd, kk:mm"),
-    totalHours: totalHours,
+    hourlyRate,
+    hours,
+    price
   };
 
   state.timeTrackingData.push(timeTrackingDataRow);
@@ -154,16 +167,24 @@ function createTimeRowElement(timeTrackingDataRow) {
   end.className = "end-time";
   end.textContent = timeTrackingDataRow.endTime;
 
-  const total = document.createElement("td");
-  total.className = "total-hours";
-  total.textContent = timeTrackingDataRow.totalHours;
+  const hourlyRate = document.createElement("td");
+  hourlyRate.className = "hourly-rate";
+  hourlyRate.textContent = timeTrackingDataRow.hourlyRate;
+
+  const hours = document.createElement("td");
+  hours.className = "hours";
+  hours.textContent = timeTrackingDataRow.hours;
+
+  const price = document.createElement("td");
+  price.className = "price";
+  price.textContent = timeTrackingDataRow.price;
 
   const deleteBtn = document.createElement("td");
   deleteBtn.className = "delete-btn";
   deleteBtn.innerHTML = `<svg class="delete-btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6v18h18V6H3zm5 14c0 .552-.448 1-1 1s-1-.448-1-1V10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1V10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1V10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2H2V2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2H22z"/></svg>`;
   deleteBtn.onclick = () => deleteTimeRow(row);
 
-  row.append(start, end, total, deleteBtn);
+  row.append(start, end, hourlyRate, hours, price, deleteBtn);
   html.timeTrackingRows.append(row);
 }
 
@@ -176,9 +197,11 @@ function calculateElapsedHours(dateEnd, dateStart) {
 
 function calculateSumOfWorkedHours() {
   if (state.timeTrackingData.length) {
-    html.sumOfWorkedHours.textContent = roundToX(state.timeTrackingData.reduce((sum, {totalHours}) => sum + totalHours, 0), 2);
+    html.sumOfWorkedHours.textContent = roundToX(state.timeTrackingData.reduce((sum, {hours}) => sum + hours, 0), 2) + "h";
+    html.sumOfCharges.textContent = roundToX(state.timeTrackingData.reduce((sum, {price}) => sum + price, 0), 2) + "$";
   } else {
     html.sumOfWorkedHours.textContent = "0";
+    html.sumOfCharges.textContent = "0";
   }
 }
 
@@ -190,6 +213,7 @@ function roundToX(num, X) {
 
 function saveTimeTrackingData() {
   localStorage.setItem("time-tracking-data", JSON.stringify(state.timeTrackingData));
+  localStorage.setItem("hourly-rate", state.hourlyRate);
 }
 
 
@@ -205,10 +229,15 @@ function loadTimeTrackingData() {
     }
     calculateSumOfWorkedHours();
   }
+  state.hourlyRate = Number(localStorage.getItem("hourly-rate"));
+  html.hourlyRate.value = state.hourlyRate;
 }
 
 
 function resetApplication() {
-  localStorage.removeItem("time-tracking-data");
-  window.location.reload();
+  if (confirm("Effacer toutes les données et recommencer à zéro ?")) {
+    localStorage.removeItem("time-tracking-data");
+    localStorage.removeItem("hourly-rate");
+    window.location.reload();
+  }
 }
