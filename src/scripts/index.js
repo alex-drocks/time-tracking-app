@@ -23,6 +23,7 @@ const html = {
   startTimeInput: document.getElementById("startTimeInput"),
   endTimeInput: document.getElementById("endTimeInput"),
   timeTrackingRows: document.getElementById("timeTrackingRows"),
+  sumOfWorkedHours: document.getElementById("sumOfWorkedHours"),
   resetApplication: document.getElementById("resetApplication"),
 };
 
@@ -83,23 +84,18 @@ function stopTimer() {
   state.dateTimeEnd = now;
   html.endTimeInput.value = format(now, "yyyy-MM-dd'T'kk:mm");
   addTimeRow(null);
-
   html.toggleTimerBtn.className = "start-timer";
 }
 
 
 function updateTimerDisplay() {
   const now = new Date();
-  // const hours = differenceInHours(now, state.dateTimeStart);
-  // const mins = differenceInMinutes(now, state.dateTimeStart);
-  // const secs = differenceInSeconds(now, state.dateTimeStart);
-
   let diffTime = now.valueOf() - state.dateTimeStart.valueOf();
   let days = diffTime / (24 * 60 * 60 * 1000);
   let hours = (days % 1) * 24;
   let minutes = (hours % 1) * 60;
   let secs = (minutes % 1) * 60;
-  [days, hours, minutes, secs] = [Math.floor(days), Math.floor(hours), Math.floor(minutes), Math.floor(secs)];
+  [hours, minutes, secs] = [Math.floor(days), Math.floor(hours), Math.floor(minutes), Math.floor(secs)];
 
   html.timeCounter.textContent = `${hours}h ${minutes}m ${secs}s`;
 }
@@ -114,6 +110,7 @@ function addTimeRow(event = null) {
   const totalHours = calculateElapsedHours(endTime, startTime);
 
   const timeTrackingDataRow = {
+    id: nanoid(),
     startTime: format(startTime, "yyyy-MM-dd, kk:mm"),
     endTime: format(endTime, "yyyy-MM-dd, kk:mm"),
     totalHours: totalHours,
@@ -121,38 +118,37 @@ function addTimeRow(event = null) {
 
   state.timeTrackingData.push(timeTrackingDataRow);
   createTimeRowElement(timeTrackingDataRow);
+  calculateSumOfWorkedHours();
   saveTimeTrackingData(timeTrackingDataRow);
 }
 
 
 function deleteTimeRow(rowElement) {
+  state.timeTrackingData = state.timeTrackingData.filter(item => item.id !== rowElement.id);
   rowElement.remove();
+  calculateSumOfWorkedHours();
+  saveTimeTrackingData();
 }
 
 
 function createTimeRowElement(timeTrackingDataRow) {
   const row = document.createElement("tr");
-  const uniqueId = nanoid();
-  row.id = `timeRow-${uniqueId}`;
+  row.id = timeTrackingDataRow.id;
 
   const start = document.createElement("td");
-  start.id = `startTime-${uniqueId}`;
   start.className = "start-time";
   start.textContent = timeTrackingDataRow.startTime;
 
   const end = document.createElement("td");
-  end.id = `endTime-${uniqueId}`;
   end.className = "end-time";
   end.textContent = timeTrackingDataRow.endTime;
 
   const total = document.createElement("td");
-  total.id = `totalHours-${uniqueId}`;
   total.className = "total-hours";
   total.textContent = timeTrackingDataRow.totalHours;
 
   const deleteBtn = document.createElement("td");
   deleteBtn.className = "delete-btn";
-  deleteBtn.id = `deleteBtn-${uniqueId}`;
   deleteBtn.innerHTML = `<svg class="delete-btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6v18h18V6H3zm5 14c0 .552-.448 1-1 1s-1-.448-1-1V10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1V10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1V10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2H2V2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2H22z"/></svg>`;
   deleteBtn.onclick = () => deleteTimeRow(row);
 
@@ -164,6 +160,15 @@ function createTimeRowElement(timeTrackingDataRow) {
 function calculateElapsedHours(dateEnd, dateStart) {
   const differenceInMilliseconds = dateEnd.getTime() - dateStart.getTime();
   return roundToX(differenceInMilliseconds / 3600000, 2);
+}
+
+
+function calculateSumOfWorkedHours() {
+  if (state.timeTrackingData.length) {
+    html.sumOfWorkedHours.textContent = roundToX(state.timeTrackingData.reduce((sum, {totalHours}) => sum + totalHours, 0), 2);
+  } else {
+    html.sumOfWorkedHours.textContent = "0";
+  }
 }
 
 
@@ -187,6 +192,7 @@ function loadTimeTrackingData() {
         createTimeRowElement(dataRow);
       });
     }
+    calculateSumOfWorkedHours();
   }
 }
 

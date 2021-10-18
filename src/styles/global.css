@@ -128,3 +128,8 @@ table .delete-btn-icon {
   height: 100%;
   cursor: pointer;
 }
+
+#sumOfWorkedHours {
+  border-top: 1px dashed lightgrey;
+  font-weight: 600;
+}
