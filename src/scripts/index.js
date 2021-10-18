@@ -7,6 +7,17 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
+window.onbeforeunload = (ev) => {
+  if (state.timerIsActive) {
+    const userChoice = confirm("Le compteur est activé, êtes-vous certain de vouloir quitter ?");
+    if (userChoice === false) {
+      ev.preventDefault();
+      ev.returnValue = '';
+    }
+  }
+};
+
+
 const state = {
   timeTrackingData: [],
   timerIsActive: false,
@@ -90,12 +101,12 @@ function stopTimer() {
 
 function updateTimerDisplay() {
   const now = new Date();
-  let diffTime = now.valueOf() - state.dateTimeStart.valueOf();
-  let days = diffTime / (24 * 60 * 60 * 1000);
+  const diffTime = now.valueOf() - state.dateTimeStart.valueOf();
+  let days = diffTime / 86400000;
   let hours = (days % 1) * 24;
   let minutes = (hours % 1) * 60;
   let secs = (minutes % 1) * 60;
-  [hours, minutes, secs] = [Math.floor(days), Math.floor(hours), Math.floor(minutes), Math.floor(secs)];
+  [days, hours, minutes, secs] = [Math.floor(days), Math.floor(hours), Math.floor(minutes), Math.floor(secs)];
 
   html.timeCounter.textContent = `${hours}h ${minutes}m ${secs}s`;
 }

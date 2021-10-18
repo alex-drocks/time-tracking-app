@@ -21,7 +21,7 @@ h1 {
 }
 
 #timeCounter {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   text-shadow: 2px 3px 2px rgba(0, 0, 0, 10%);
 }
 
@@ -34,7 +34,7 @@ h1 {
   cursor: pointer;
   margin: .25rem .125rem;
   border-radius: .25rem;
-  width: 120px;
+  width: 140px;
   height: 50px;
   display: flex;
   align-items: center;
