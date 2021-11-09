@@ -4,7 +4,8 @@
   "description": "Web app for simple time tracking. Get amount of time spent on your tasks.",
   "scripts": {
     "start": "parcel --no-cache",
-    "deploy": "rm -rf dist && parcel build --no-source-maps && firebase deploy"
+    "clean": "if exist dist rmdir /Q /S dist",
+    "deploy": "npm run clean && parcel build --no-source-maps && firebase deploy --only hosting"
   },
   "source": "src/index.html",
   "browserslist": "> 1%, last 2 versions, not dead",
@@ -18,8 +19,8 @@
   "author": "Alexandre Desroches",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^10.3.7",
-    "parcel": "^2.0.0"
+    "autoprefixer": "^10.4.0",
+    "parcel": "^2.0.1"
   },
   "dependencies": {
     "date-fns": "^2.25.0",
